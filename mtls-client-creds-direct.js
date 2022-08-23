@@ -7,15 +7,17 @@ import * as querystring from 'querystring';
 
 
 
+const cert = fs.readFileSync("./selfsigned/selfsignedcert.pem");
+const key = fs.readFileSync("./selfsigned/selfsignedkey.pem");
+
 const req = https.request(
   {
     hostname: 'mtls.desmaximus.com',
     port: 443,
     path: '/token',
     method: 'POST',
-    cert: fs.readFileSync('./certs-sha256/client1-crt.pem'),
-    key: fs.readFileSync('./certs-sha256/client1-key.pem'),
-    passphrase: "Auth0Dem0",
+    cert: cert,
+    key: key,
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
@@ -35,5 +37,5 @@ req.on('error', (e) => {
   
 
 console.log(req.clientCertEngine)
-req.write(querystring.stringify({ client_id: 'client-pki-mtls', grant_type: 'client_credentials' }));
+req.write(querystring.stringify({ client_id: 'client-self-signed-mtls', grant_type: 'client_credentials' }));
 req.end();
